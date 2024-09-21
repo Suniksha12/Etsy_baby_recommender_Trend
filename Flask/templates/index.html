@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Recommendation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: url('{{ url_for('static', filename='background.jpg') }}') no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            font-size: 2.5em;
+            background: linear-gradient(90deg, rgba(39,174,96,1) 0%, rgba(24,144,255,1) 100%);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            margin: auto;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        input {
+            padding: 10px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1.1em;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #218c54;
+        }
+        .recommendation {
+            border: 1px solid #7b6363;
+            background: white;
+            padding: 15px;
+            margin-top: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .recommendation:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .price {
+            color: #27ae60;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        .favorites, .reviews {
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <h1>Personalized Product Recommendation System</h1>
+    <div class="container">
+        <form id="recommendation-form">
+            <input type="number" placeholder="Enter Price" name="price" required>
+            <input type="number" placeholder="Enter Favorites" name="favorites" required>
+            <input type="number" placeholder="Enter Reviews" name="reviews" required>
+            <button type="submit">Get Recommendations</button>
+        </form>
+
+        <div id="recommendations"></div>
+    </div>
+
+    <script>
+        document.getElementById('recommendation-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            const response = await fetch('/recommendations', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            const recommendationsDiv = document.getElementById('recommendations');
+            recommendationsDiv.innerHTML = ''; // Clear previous recommendations
+
+            if (result.recommendations) {
+                recommendationsDiv.innerHTML += `<h2>${result.message}</h2>`;
+                result.recommendations.forEach(item => {
+                    recommendationsDiv.innerHTML += `
+                        <div class="recommendation">
+                            <h3>${item.name}</h3>
+                            <p class="price">$${item.Price.toFixed(2)}</p>
+                            <p class="favorites">Favorites: ${item.favorites}</p>
+                            <p class="reviews">Number of Reviews: ${item.numberOfReviews}</p>
+                        </div>
+                    `;
+                });
+            } else {
+                recommendationsDiv.innerHTML = '<p>No recommendations found.</p>';
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+
