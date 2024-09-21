@@ -64,12 +64,3 @@ Flask/
 ### Recommendations
 ![Recommendations](static/recommendations_screenshot.png)
 
----
-
-🌟 **Future Improvements:**
-- Include additional user preferences.
-- Improve UI for a better user experience.
-
-🌐 Check out the live application [here](#).
-
-👩‍💻 Made with ❤️ by [Your Name](#).
